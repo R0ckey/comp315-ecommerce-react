@@ -25,7 +25,15 @@ export const ProductList = (props: ContentAreaProps) => {
             </p>
           </div>
 
-          <img src={"/src/Assets/Product_Images/" + item.image_link} />
+          <img
+            src={
+              new URL(
+                `./Assets/Product_Images/${item.image_link}`,
+                import.meta.url
+              ).href
+            }
+            alt={item.name}
+          />
 
           <button
             onClick={() => props.addToBasket(item)}
