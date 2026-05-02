@@ -3,7 +3,7 @@ import { ProductList } from './Components/ProductList'
 import itemList from './Assets/random_products_175.json';
 import './e-commerce-stylesheet.css'
 import logo from "./Assets/Logo.png";
-import basketIcon from "./assets/shopping-basket.png";
+import basketIcon from "./Assets/shopping-basket.png";
 
 type Product = {
   id: number
