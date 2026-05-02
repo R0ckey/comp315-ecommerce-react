@@ -33,6 +33,9 @@ export const ProductList = (props: ContentAreaProps) => {
               ).href
             }
             alt={item.name}
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/200";
+            }}
           />
 
           <button
