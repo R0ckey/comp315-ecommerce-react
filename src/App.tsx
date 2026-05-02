@@ -17,7 +17,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchedProducts, setSearchedProducts] = useState<Product[]>(itemList);
   const [sortBy, setSortBy] = useState<string>("name");
-  const [inStockOnly, setInStockOnly] = useState<boolean>(false);
+  const [inStockOnly] = useState<boolean>(false);
   const [basket, setBasket] = useState<any[]>([]);
 
   // ===== Hooks =====
