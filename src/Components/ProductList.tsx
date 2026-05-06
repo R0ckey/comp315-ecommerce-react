@@ -1,8 +1,3 @@
-type ContentAreaProps = {
-  itemList: Product[];
-  addToBasket: (product: Product) => void;
-};
-
 type Product = {
   id: number;
   name: string;
@@ -11,6 +6,11 @@ type Product = {
   quantity: number;
   rating: number;
   image_link: string;
+};
+
+type ContentAreaProps = {
+  itemList: Product[];
+  addToBasket: (product: Product) => void;
 };
 
 export const ProductList = (props: ContentAreaProps) => {
@@ -28,14 +28,11 @@ export const ProductList = (props: ContentAreaProps) => {
           <img
             src={
               new URL(
-                `./Assets/Product_Images/${item.image_link}`,
+                `../Assets/Product_Images/${item.image_link}`,
                 import.meta.url
               ).href
             }
             alt={item.name}
-            onError={(e) => {
-              e.currentTarget.src = "https://via.placeholder.com/200";
-            }}
           />
 
           <button

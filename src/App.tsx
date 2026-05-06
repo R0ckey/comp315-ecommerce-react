@@ -1,96 +1,97 @@
-import { useState, useEffect } from 'react'
-import { ProductList } from './Components/ProductList'
-import itemList from './Assets/random_products_175.json';
-import './e-commerce-stylesheet.css'
+import { useState, useEffect } from "react";
+import { ProductList } from "./Components/ProductList";
+import itemList from "./Assets/random_products_175.json";
+import "./e-commerce-stylesheet.css";
 import logo from "./Assets/Logo.png";
 import basketIcon from "./Assets/shopping-basket.png";
 
 type Product = {
-  id: number
-	name: string
-  price: number
-  category: string
-  quantity: number
-  rating: number
-  image_link: string
-}
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  quantity: number;
+  rating: number;
+  image_link: string;
+};
+
+type BasketItem = Product & {
+  basketQuantity: number;
+};
 
 function App() {
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchedProducts, setSearchedProducts] = useState<Product[]>(itemList);
-  const [sortBy, setSortBy] = useState<string>("name");
+  const [sortBy, setSortBy] = useState<string>("AtoZ");
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
-  const [basket, setBasket] = useState<any[]>([]);
+  const [basket, setBasket] = useState<BasketItem[]>([]);
 
-  // ===== Hooks =====
   useEffect(() => {
     updateSearchedProducts();
   }, [searchTerm, sortBy, inStockOnly]);
-  
-  // ===== Basket management =====
-  function showBasket(){
-    let areaObject = document.getElementById('shopping-area');
-    if(areaObject !== null){
-      areaObject.style.display='block';
+
+  function showBasket() {
+    const areaObject = document.getElementById("shopping-area");
+    if (areaObject !== null) {
+      areaObject.style.display = "block";
     }
   }
 
-  function hideBasket(){
-    let areaObject = document.getElementById('shopping-area');
-    if(areaObject !== null){
-      areaObject.style.display='none';
+  function hideBasket() {
+    const areaObject = document.getElementById("shopping-area");
+    if (areaObject !== null) {
+      areaObject.style.display = "none";
     }
   }
 
-  const addToBasket = (product: Product) => {
-    console.log("Added:", product.name);
-    setBasket((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
+  function addToBasket(product: Product) {
+    setBasket((prevBasket) => {
+      const existingItem = prevBasket.find((item) => item.id === product.id);
 
-      if (existing) {
-        return prev.map((item) =>
+      if (existingItem) {
+        return prevBasket.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, basketQuantity: item.basketQuantity + 1 }
             : item
         );
       }
 
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prevBasket, { ...product, basketQuantity: 1 }];
     });
-  };
+  }
 
-  const removeFromBasket = (id: number) => {
-    setBasket((prev) =>
-      prev
+  function removeFromBasket(id: number) {
+    setBasket((prevBasket) =>
+      prevBasket
         .map((item) =>
-          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+          item.id === id
+            ? { ...item, basketQuantity: item.basketQuantity - 1 }
+            : item
         )
-        .filter((item) => item.quantity > 0)
+        .filter((item) => item.basketQuantity > 0)
     );
-  };
+  }
 
   const totalCost = basket.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (total, item) => total + item.price * item.basketQuantity,
     0
   );
 
-  // ===== Search =====
   function updateSearchedProducts() {
-    let holderList: Product[] = itemList;
-
-    let filtered = holderList.filter((product: Product) =>
+    let filtered: Product[] = itemList.filter((product: Product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // ✅ In-stock filter
     if (inStockOnly) {
       filtered = filtered.filter((product) => product.quantity > 0);
     }
 
-    // ✅ Sorting
     filtered.sort((a, b) => {
-      if (sortBy === "price") return a.price - b.price;
-      if (sortBy === "rating") return b.rating - a.rating;
+      if (sortBy === "ZtoA") return b.name.localeCompare(a.name);
+      if (sortBy === "£LtoH") return a.price - b.price;
+      if (sortBy === "£HtoL") return b.price - a.price;
+      if (sortBy === "*LtoH") return a.rating - b.rating;
+      if (sortBy === "*HtoL") return b.rating - a.rating;
       return a.name.localeCompare(b.name);
     });
 
@@ -100,7 +101,7 @@ function App() {
   function getResultsText() {
     const count = searchedProducts.length;
 
-    if (searchTerm !== "") {
+    if (searchTerm.trim() !== "") {
       if (count === 0) return "No search results found";
       if (count === 1) return "1 Result";
       return `${count} Results`;
@@ -110,23 +111,24 @@ function App() {
     return `${count} Products`;
   }
 
- 
-
   return (
     <div id="container">
       <div id="logo-bar">
         <div id="logo-area">
-          <img src={logo} />
+          <img src={logo} alt="University of Liverpool logo" />
         </div>
+
         <div id="shopping-icon-area">
-          <img src={basketIcon} onClick={showBasket} />
+          <img src={basketIcon} onClick={showBasket} alt="Shopping basket" />
         </div>
+
         <div id="shopping-area">
           <div id="exit-area">
             <p id="exit-icon" onClick={hideBasket}>
               x
             </p>
           </div>
+
           {basket.length === 0 ? (
             <p>Your basket is empty</p>
           ) : (
@@ -135,7 +137,8 @@ function App() {
                 <div className="shopping-row" key={item.id}>
                   <div className="shopping-information">
                     <p>
-                      {item.name} (£{item.price.toFixed(2)}) - {item.quantity}
+                      {item.name} (£{item.price.toFixed(2)}) -{" "}
+                      {item.basketQuantity}
                     </p>
                   </div>
 
@@ -150,6 +153,7 @@ function App() {
           )}
         </div>
       </div>
+
       <div id="search-bar">
         <input
           type="text"
@@ -159,10 +163,14 @@ function App() {
 
         <div id="control-area">
           <select onChange={(e) => setSortBy(e.target.value)}>
-            <option value="name">Name</option>
-            <option value="price">Price</option>
-            <option value="rating">Rating</option>
+            <option value="AtoZ">By name (A - Z)</option>
+            <option value="ZtoA">By name (Z - A)</option>
+            <option value="£LtoH">By price (low - high)</option>
+            <option value="£HtoL">By price (high - low)</option>
+            <option value="*LtoH">By rating (low - high)</option>
+            <option value="*HtoL">By rating (high - low)</option>
           </select>
+
           <label>
             <input
               type="checkbox"
@@ -172,10 +180,12 @@ function App() {
           </label>
         </div>
       </div>
+
       <p id="results-indicator">{getResultsText()}</p>
+
       <ProductList itemList={searchedProducts} addToBasket={addToBasket} />
     </div>
   );
 }
 
-export default App
+export default App;
