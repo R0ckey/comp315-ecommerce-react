@@ -172,7 +172,7 @@ function App() {
           </label>
         </div>
       </div>
-      <p id="results-indicator">{getResultsText()}</p>{" "}
+      <p id="results-indicator">{getResultsText()}</p>
       <ProductList itemList={searchedProducts} addToBasket={addToBasket} />
     </div>
   );
