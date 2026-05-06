@@ -19,7 +19,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchedProducts, setSearchedProducts] = useState<Product[]>(itemList);
   const [sortBy, setSortBy] = useState<string>("name");
-  const [inStockOnly] = useState<boolean>(false);
+  const [inStockOnly, setInStockOnly] = useState<boolean>(false);
   const [basket, setBasket] = useState<any[]>([]);
 
   // ===== Hooks =====
@@ -163,10 +163,16 @@ function App() {
             <option value="price">Price</option>
             <option value="rating">Rating</option>
           </select>
+          <label>
+            <input
+              type="checkbox"
+              onChange={(e) => setInStockOnly(e.target.checked)}
+            />
+            In Stock Only
+          </label>
         </div>
       </div>
-
-      <p className="results-indicator">{getResultsText()}</p>
+      <p id="results-indicator">{getResultsText()}</p>{" "}
       <ProductList itemList={searchedProducts} addToBasket={addToBasket} />
     </div>
   );
