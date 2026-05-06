@@ -8,38 +8,40 @@ type Product = {
   image_link: string;
 };
 
-type ContentAreaProps = {
+type ProductListProps = {
   itemList: Product[];
   addToBasket: (product: Product) => void;
 };
 
-export const ProductList = (props: ContentAreaProps) => {
+export const ProductList = (props: ProductListProps) => {
   return (
     <div id="productList">
-      {props.itemList.map((item) => (
-        <div key={item.id} className="product">
+      {props.itemList.map((product) => (
+        <div key={product.id} className="product">
           <div className="product-top-bar">
-            <h2>{item.name}</h2>
+            <h2>{product.name}</h2>
+
             <p>
-              £{item.price.toFixed(2)} ({item.rating}/5)
+              £{product.price.toFixed(2)} ({product.rating}/5)
             </p>
           </div>
 
           <img
             src={
               new URL(
-                `../Assets/Product_Images/${item.image_link}`,
+                `../Assets/Product_Images/${product.image_link}`,
                 import.meta.url
               ).href
             }
-            alt={item.name}
+            alt={product.name}
           />
 
           <button
-            onClick={() => props.addToBasket(item)}
-            disabled={item.quantity === 0}
+            value={product.id}
+            onClick={() => props.addToBasket(product)}
+            disabled={product.quantity === 0}
           >
-            {item.quantity === 0 ? "Out of stock" : "Add to basket"}
+            {product.quantity === 0 ? "Out of stock" : "Add to basket"}
           </button>
         </div>
       ))}
